@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
-import bpy, re
+import bpy
 from bpy.types import (
     Header,
     Menu,
@@ -1156,19 +1156,14 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             flow.prop(strip, "use_only_boost")
 
         elif strip_type == 'SPEED':
-            col = layout.column(align=True)
-            col.prop(strip, "speed_control", text="Speed Control")
-            if strip.speed_control == "MULTIPLY":
-                col.prop(strip, "speed_factor", text=" ")
-            elif strip.speed_control == "LENGTH":
-                col.prop(strip, "speed_length", text=" ")
-            elif strip.speed_control == "FRAME_NUMBER":
-                col.prop(strip, "speed_frame_number", text=" ")
-
-            row = layout.row(align=True)
-            row.enabled = strip.speed_control != "STRETCH"
-            row = layout.row(align=True, heading="Interpolation")
-            row.prop(strip, "use_frame_interpolate", text="")
+            layout.prop(strip, "use_default_fade", text="Stretch to Input Strip Length")
+            if not strip.use_default_fade:
+                layout.prop(strip, "use_as_speed")
+                if strip.use_as_speed:
+                    layout.prop(strip, "speed_factor")
+                else:
+                    layout.prop(strip, "speed_factor", text="Frame Number")
+                    layout.prop(strip, "use_scale_to_length")
 
         elif strip_type == 'TRANSFORM':
             col = layout.column()
@@ -1238,7 +1233,11 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             layout.prop(strip, "wrap_width", text="Wrap Width")
 
         col = layout.column(align=True)
-        if strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
+        if strip_type == 'SPEED':
+            col.prop(strip, "multiply_speed")
+            col.prop(strip, "use_frame_interpolate")
+
+        elif strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
             col.prop(strip, "use_default_fade", text="Default Fade")
             if not strip.use_default_fade:
                 col.prop(strip, "effect_fader", text="Effect Fader")
@@ -1698,8 +1697,10 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
         split = col.split(factor=0.37)
         split.alignment = 'RIGHT'
         split.label(text="Preset")
-        add_space = re.sub('(\d+(\.\d+)?)', r' \1 ', audio_channels.title())
-        split.operator_menu_enum('sequencer.pan_presets', audio_channels, text=add_space)
+        prefs = context.preferences
+        enum_def = prefs.system.bl_rna.properties["audio_channels"]
+        lut = {i.identifier : i.name for i in enum_def.enum_items}
+        split.operator_menu_enum('sequencer.pan_presets', audio_channels, text=lut[prefs.system.audio_channels])
         col.enabled = split.enabled = sound is not None and sound.use_mono
 
         if sound is not None:
