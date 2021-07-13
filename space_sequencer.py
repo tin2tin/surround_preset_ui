@@ -1690,17 +1690,19 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
 
         col = layout.column(heading="Mono")
         col.prop(sound, "use_mono", text="")
-        
+
         col = layout.column()
-        
+
         col.prop(strip, "pan")
         split = col.split(factor=0.37)
         split.alignment = 'RIGHT'
-        split.label(text="Preset")
+        split.label(text="Pan Preset")
+        # Get enum text.
         prefs = context.preferences
         enum_def = prefs.system.bl_rna.properties["audio_channels"]
-        lut = {i.identifier : i.name for i in enum_def.enum_items}
-        split.operator_menu_enum('sequencer.pan_presets', audio_channels, text=lut[prefs.system.audio_channels])
+        lut = {i.identifier: i.name for i in enum_def.enum_items}
+        split.operator_menu_enum(
+            'sequencer.pan_presets', audio_channels, text=lut[prefs.system.audio_channels])
         col.enabled = split.enabled = sound is not None and sound.use_mono
 
         if sound is not None:
