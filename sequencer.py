@@ -380,7 +380,7 @@ def calculate_duration_frames(context, duration_seconds):
 class SEQUENCER_OT_pan_presets(Operator):
     """Pan Presets"""
     bl_idname = "sequencer.pan_presets"
-    bl_label = "Preset"
+    bl_label = "Pan Preset"
     bl_options = {'REGISTER', 'UNDO'}
 
     mono: EnumProperty(
@@ -406,8 +406,8 @@ class SEQUENCER_OT_pan_presets(Operator):
             ('FRONTLEFT', 'Front Left', 'Pan to the left'),
             ('FRONTCENTER', 'Front Center', 'Pan to the center'),
             ('FRONTRIGHT', 'Front Right', 'Pan to the right'),
-            ('REARLEFT', 'Rear Left', 'Pan to the rear left'),
-            ('REARRIGHT', 'Rear Right', 'Pan to the rear right'),
+            ('SIDELEFT', 'Side Left', 'Pan to the side left'),
+            ('SIDERIGHT', 'Side Right', 'Pan to the side right'),
         ),
         name="4 Channel Presets",
         description="Pan the audio",
@@ -419,11 +419,7 @@ class SEQUENCER_OT_pan_presets(Operator):
             ('FRONTCENTER', 'Front Center', 'Pan to the front center'),
             ('FRONTRIGHT', 'Front Right', 'Pan to the front right'),
             ('SIDELEFT', 'Side Left', 'Pan to the side left'),
-            ('MIDDLECENTER', 'Center', 'Pan to the side center'),
             ('SIDERIGHT', 'Side Right', 'Pan to the side right'),
-            ('REARLEFT', 'Rear Left', 'Pan to the rear left'),
-            ('REARCENTER', 'Rear Center', 'Pan to the rear center'),
-            ('REARRIGHT', 'Rear Right', 'Pan to the rear right'),
         ),
         name="5.1 Surround Presets",
         description="Pan the audio",
@@ -459,43 +455,36 @@ class SEQUENCER_OT_pan_presets(Operator):
         print(audio_channels)
         for sequence in sequences:
             if audio_channels == 'STEREO':
-                if self.stereo == 'LEFT': sequence.pan = -1
-                if self.stereo == 'CENTER': sequence.pan = 0
-                if self.stereo == 'RIGHT': sequence.pan = 1
+                if self.stereo == 'LEFT': sequence.pan = -1.0
+                if self.stereo == 'CENTER': sequence.pan = 0.0
+                if self.stereo == 'RIGHT': sequence.pan = 1.0
 
             if audio_channels == 'SURROUND4':
-                if self.surround4 == 'FRONTLEFT': sequence.pan = -1
+                if self.surround4 == 'FRONTLEFT': sequence.pan = -0.5
                 if self.surround4 == 'FRONTCENTER': sequence.pan = 0
-                if self.surround4 == 'FRONTRIGHT': sequence.pan = 1
+                if self.surround4 == 'FRONTRIGHT': sequence.pan = 0.5
 							
-                if self.surround4 == 'REARLEFT': sequence.pan = -2 # ?
-                if self.surround4 == 'REARRIGHT': sequence.pan = 2 # ?
+                if self.surround4 == 'SIDELEFT': sequence.pan = -1.5
+                if self.surround4 == 'SIDERIGHT': sequence.pan = 1.5
 
             if audio_channels == 'SURROUND51':
-                if self.surround51 == 'FRONTLEFT': sequence.pan = -1
+                if self.surround51 == 'FRONTLEFT': sequence.pan = -0.33335
                 if self.surround51 == 'FRONTCENTER': sequence.pan = 0
-                if self.surround51 == 'FRONTRIGHT': sequence.pan = 1
+                if self.surround51 == 'FRONTRIGHT': sequence.pan = 0.33335
 
-                if self.surround51 == 'SIDELEFT': sequence.pan = -1.250
-                if self.surround51 == 'SIDECENTER': sequence.pan = 0 # ?
-                if self.surround51 == 'SIDERIGHT': sequence.pan = 1.250
-
-                if self.surround51 == 'REARLEFT': sequence.pan = -2 # Centered?
-                if self.surround51 == 'REARCENTER': sequence.pan = 0 # ?
-                if self.surround51 == 'REARRIGHT': sequence.pan = 2 # Centered?
+                if self.surround51 == 'SIDELEFT': sequence.pan = -1.2225
+                if self.surround51 == 'SIDERIGHT': sequence.pan = 1.2225
 
             if audio_channels == 'SURROUND71':
                 if self.surround71 == 'FRONTLEFT': sequence.pan = -0.33335
                 if self.surround71 == 'FRONTCENTER': sequence.pan = 0
                 if self.surround71 == 'FRONTRIGHT': sequence.pan = 0.33335
 				
-                if self.surround71 == 'SIDELEFT': sequence.pan = -1.66667
-                if self.surround71 == 'SIDECENTER': sequence.pan = 0 #?
-                if self.surround71 == 'SIDERIGHT': sequence.pan = 1.66667
+                if self.surround71 == 'SIDELEFT': sequence.pan = -1.2225
+                if self.surround71 == 'SIDERIGHT': sequence.pan = 1.2225
 				
-                if self.surround71 == 'REARLEFT': sequence.pan = -1.222
-                if self.surround71 == 'REARCENTER': sequence.pan = 2 # ?
-                if self.surround71 == 'REARRIGHT': sequence.pan = 1.222
+                if self.surround71 == 'REARLEFT': sequence.pan = -1.66667
+                if self.surround71 == 'REARRIGHT': sequence.pan = 1.66667
         return {'FINISHED'}
 
 classes = (
